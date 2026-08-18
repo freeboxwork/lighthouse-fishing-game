@@ -1,0 +1,1322 @@
+:root {
+  color-scheme: dark;
+  --surface: rgba(14, 37, 42, 0.86);
+  --surface-raised: rgba(25, 54, 59, 0.9);
+  --surface-deep: #0e272c;
+  --text: #f5f1e5;
+  --text-muted: #bed0cc;
+  --action: #f0b66a;
+  --action-text: #15292c;
+  --boundary: rgba(229, 239, 231, 0.24);
+  --control: #dce8e4;
+  --focus-inner: #ffffff;
+  --focus-outer: #102226;
+  --success: #8ed5aa;
+  --warning: #ffc573;
+  --danger: #ff958a;
+  --disabled: #78908d;
+  --shadow: 0 18px 50px rgba(7, 25, 29, 0.2);
+  font-family:
+    Inter, Pretendard, "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  background: #719099;
+  color: var(--text);
+}
+
+button,
+kbd {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+button * {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--focus-inner);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--focus-outer);
+}
+
+#scene,
+#scene canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#scene canvas {
+  display: block;
+  touch-action: none;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--action);
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.identity {
+  position: fixed;
+  z-index: 5;
+  top: clamp(1rem, 3vw, 2rem);
+  left: clamp(1rem, 3vw, 2rem);
+  display: flex;
+  align-items: center;
+  max-width: 28rem;
+  gap: 0.85rem;
+  pointer-events: none;
+  text-shadow: 0 2px 18px rgba(4, 20, 24, 0.35);
+}
+
+.angler-profile {
+  width: clamp(3.5rem, 5vw, 4.6rem);
+  height: clamp(3.5rem, 5vw, 4.6rem);
+  flex: 0 0 auto;
+  border: 1px solid rgba(240, 182, 106, 0.72);
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow:
+    0 0 0 4px rgba(14, 39, 44, 0.48),
+    0 12px 34px rgba(4, 20, 24, 0.25);
+}
+
+.identity h1 {
+  margin: 0.28rem 0 0;
+  font-family: Georgia, "Noto Serif KR", serif;
+  font-size: clamp(1.5rem, 3vw, 2.75rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+.identity-note {
+  margin: 0.65rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.83rem;
+  line-height: 1.45;
+}
+
+.cargo-ledger {
+  position: fixed;
+  z-index: 6;
+  top: clamp(1rem, 3vw, 2rem);
+  left: 50%;
+  width: min(22rem, 34vw);
+  padding: 0.55rem 0.65rem 0.62rem;
+  transform: translateX(-50%);
+  border: 1px solid var(--boundary);
+  border-radius: 0.4rem;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+}
+
+.cargo-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.45rem;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+
+.cargo-heading strong {
+  color: var(--action);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.7rem;
+}
+
+.cargo-slots {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.3rem;
+}
+
+.cargo-slot {
+  position: relative;
+  display: block;
+  min-width: 0;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--tier-color, var(--boundary)) 68%, transparent);
+  border-radius: 0.28rem;
+  background: rgba(210, 236, 231, 0.08);
+}
+
+.cargo-slot.is-empty::after {
+  position: absolute;
+  inset: 36%;
+  border: 1px solid var(--boundary);
+  border-radius: 50%;
+  content: "";
+}
+
+.cargo-slot[data-tier="common"],
+[data-tier="common"] {
+  --tier-color: #b9d5d6;
+}
+
+.cargo-slot[data-tier="uncommon"],
+[data-tier="uncommon"] {
+  --tier-color: #7ed8b0;
+}
+
+.cargo-slot[data-tier="rare"],
+[data-tier="rare"] {
+  --tier-color: #8cb8ff;
+}
+
+.cargo-slot[data-tier="legendary"],
+[data-tier="legendary"] {
+  --tier-color: #ffc573;
+}
+
+.fish-sprite {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: url('/assets/fish-atlas-v2.webp');
+  background-repeat: no-repeat;
+  background-position: var(--fish-x, 0%) var(--fish-y, 0%);
+  background-size: 400% 300%;
+}
+
+.telemetry {
+  position: fixed;
+  z-index: 5;
+  top: clamp(1rem, 3vw, 2rem);
+  right: clamp(1rem, 3vw, 2rem);
+  width: min(15.5rem, calc(100vw - 2rem));
+  padding: 0.55rem 0.85rem 0.75rem;
+  border-top: 1px solid var(--boundary);
+  border-bottom: 1px solid var(--boundary);
+  background: linear-gradient(90deg, transparent, rgba(12, 37, 42, 0.38));
+  backdrop-filter: blur(8px);
+  font-size: 0.76rem;
+}
+
+.telemetry-row #zone-value,
+#zone-value {
+  max-width: 8.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.telemetry-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  min-height: 1.65rem;
+  gap: 1rem;
+  color: var(--text-muted);
+}
+
+.telemetry-row strong {
+  color: var(--text);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+
+.navigation-state {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.45rem;
+  padding-top: 0.68rem;
+  border-top: 1px solid var(--boundary);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.state-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  flex: 0 0 auto;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+
+.navigation-state[data-state="ready"] {
+  color: var(--success);
+}
+
+.navigation-state[data-state="warning"] {
+  color: var(--warning);
+}
+
+.navigation-state[data-state="error"] {
+  color: var(--danger);
+}
+
+.navigation-state[data-state="ready"] .state-dot {
+  background: currentColor;
+  box-shadow: 0 0 0 3px rgba(142, 213, 170, 0.13);
+}
+
+.action-bar {
+  position: fixed;
+  z-index: 6;
+  right: clamp(1rem, 3vw, 2rem);
+  bottom: clamp(1rem, 3vw, 2rem);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-bar button {
+  min-height: 44px;
+  padding: 0.5rem 0.72rem;
+  border: 1px solid var(--boundary);
+  border-radius: 0.35rem;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.72rem;
+  backdrop-filter: blur(12px);
+}
+
+.action-bar button:hover {
+  border-color: rgba(240, 182, 106, 0.75);
+  background: var(--surface-raised);
+}
+
+.action-bar button:disabled,
+.fishing-action button:disabled {
+  border-color: var(--boundary);
+  background: rgba(14, 37, 42, 0.58);
+  color: var(--disabled);
+  cursor: not-allowed;
+}
+
+.button-key {
+  display: inline-grid;
+  width: 1.45rem;
+  height: 1.45rem;
+  margin-right: 0.35rem;
+  place-items: center;
+  border: 1px solid var(--boundary);
+  border-radius: 0.22rem;
+  color: var(--action);
+  font-family: "SFMono-Regular", Consolas, monospace;
+}
+
+.fishing-action {
+  position: fixed;
+  z-index: 8;
+  bottom: clamp(1rem, 3vw, 2rem);
+  left: 50%;
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) auto;
+  width: min(33rem, calc(100vw - 38rem));
+  min-width: 29rem;
+  overflow: hidden;
+  transform: translateX(-50%);
+  border: 1px solid var(--boundary);
+  border-radius: 0.45rem;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+}
+
+.action-copy {
+  align-self: center;
+  min-width: 0;
+  padding: 0.65rem 0.82rem;
+}
+
+.action-copy p {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.action-copy small {
+  display: block;
+  margin-top: 0.18rem;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 0.64rem;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fishing-buttons {
+  display: flex;
+  align-items: stretch;
+}
+
+.fishing-buttons button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 52px;
+  padding: 0.45rem 0.72rem;
+  border: 0;
+  border-left: 1px solid var(--boundary);
+  background: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.fishing-buttons .button-key {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  width: auto;
+  min-width: 1.45rem;
+  padding-inline: 0.36rem;
+  margin-right: 0;
+  line-height: 1;
+}
+
+#fishing-button:not(:disabled) {
+  background: var(--action);
+  color: var(--action-text);
+}
+
+#fishing-button:not(:disabled) .button-key {
+  border-color: rgba(21, 41, 44, 0.35);
+  color: var(--action-text);
+}
+
+#fishing-button.is-bite {
+  animation: bite-pulse 520ms ease-in-out infinite alternate;
+  background: var(--warning);
+}
+
+#fishing-button.is-reeling {
+  background: #7ed8b0;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  transition: transform 80ms ease, filter 120ms ease;
+}
+
+#fishing-button.is-reeling.is-held {
+  transform: translateY(1px) scale(0.985);
+  filter: brightness(1.12);
+}
+
+.fishing-action[data-phase="reeling"] {
+  border-color: rgba(126, 216, 176, 0.58);
+  box-shadow: 0 16px 52px rgba(3, 17, 20, 0.42), 0 0 24px rgba(126, 216, 176, 0.12);
+}
+
+.fight-meter {
+  grid-column: 1 / -1;
+  padding: 0.48rem 0.78rem 0.68rem;
+  border-top: 1px solid var(--boundary);
+  background: rgba(8, 29, 34, 0.82);
+}
+
+.fight-meter-labels {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  margin-bottom: 0.3rem;
+  color: var(--text-muted);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.fight-meter-labels strong {
+  min-width: 3.6rem;
+  color: #7ed8b0;
+  text-align: center;
+}
+
+.fight-meter-labels span:last-child {
+  text-align: right;
+}
+
+.tension-track,
+.reel-track {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  height: 0.46rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tension-safe-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 27%;
+  width: 47%;
+  background: rgba(126, 216, 176, 0.19);
+}
+
+.tension-fill {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(var(--tension, 0.36));
+  transform-origin: left;
+  background: linear-gradient(90deg, #72b8d0 0%, #7ed8b0 48%, #f0b66a 76%, #ee6f5b 100%);
+  transition: transform 55ms linear;
+}
+
+.tension-needle {
+  position: absolute;
+  top: -0.09rem;
+  bottom: -0.09rem;
+  left: var(--tension-position, 36%);
+  width: 2px;
+  transform: translateX(-1px);
+  border-radius: 2px;
+  background: #fff8e9;
+  box-shadow: 0 0 8px rgba(255, 248, 233, 0.85);
+  transition: left 55ms linear;
+}
+
+.reel-track {
+  height: 0.22rem;
+  margin-top: 0.3rem;
+}
+
+#fishing-reel-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: linear-gradient(90deg, #59a9be, #7ed8b0, #f0b66a);
+  transition: transform 70ms linear;
+}
+
+.fight-meter[data-tension="danger"] .fight-meter-labels strong {
+  color: #ff927f;
+  animation: tension-danger 260ms ease-in-out infinite alternate;
+}
+
+.fight-meter[data-tension="slack"] .fight-meter-labels strong {
+  color: #91c7df;
+}
+
+#dock-button {
+  background: var(--success);
+  color: var(--surface-deep);
+}
+
+.fishing-progress-track {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+#fishing-progress {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: var(--action);
+}
+
+@keyframes tension-danger {
+  from { opacity: 0.7; }
+  to { opacity: 1; text-shadow: 0 0 10px rgba(255, 105, 84, 0.78); }
+}
+
+.catch-reveal {
+  position: fixed;
+  z-index: 11;
+  top: 42%;
+  left: 50%;
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  align-items: center;
+  width: min(24rem, calc(100vw - 2rem));
+  min-height: 8rem;
+  padding: 0.5rem 1rem 0.5rem 0.45rem;
+  transform: translate(-50%, -42%) scale(0.92);
+  border: 1px solid var(--tier-color, var(--action));
+  border-radius: 0.6rem;
+  background: rgba(10, 33, 38, 0.94);
+  box-shadow: 0 24px 80px rgba(3, 17, 20, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 180ms ease,
+    transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.catch-reveal.is-visible {
+  transform: translate(-50%, -42%) scale(1);
+  opacity: 1;
+}
+
+.catch-fish {
+  width: 7rem;
+  height: 5.4rem;
+}
+
+.catch-reveal strong,
+.catch-reveal small {
+  display: block;
+}
+
+.catch-reveal strong {
+  margin-top: 0.22rem;
+  font-family: Georgia, "Noto Serif KR", serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.catch-reveal small {
+  margin-top: 0.32rem;
+  color: var(--text-muted);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.68rem;
+}
+
+.tier-label {
+  color: var(--tier-color, var(--text-muted));
+  font-size: 0.6rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+}
+
+.aquarium-dialog {
+  width: min(58rem, calc(100vw - 2rem));
+  max-height: min(46rem, calc(100vh - 2rem));
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--boundary);
+  border-radius: 0.72rem;
+  background: #102d32;
+  box-shadow: 0 32px 110px rgba(2, 16, 19, 0.62);
+  color: var(--text);
+}
+
+.aquarium-dialog::backdrop {
+  background: rgba(4, 19, 23, 0.72);
+  backdrop-filter: blur(8px);
+}
+
+.dialog-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.2rem 1.3rem 1rem;
+  border-bottom: 1px solid var(--boundary);
+}
+
+.dialog-heading h2 {
+  margin: 0.28rem 0 0;
+  font-family: Georgia, "Noto Serif KR", serif;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  font-weight: 500;
+}
+
+.dialog-heading p:last-child {
+  margin: 0.4rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.dialog-close {
+  min-width: 52px;
+  min-height: 44px;
+  border: 1px solid var(--control);
+  border-radius: 0.35rem;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.7rem;
+}
+
+.tier-legend {
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem 1.3rem;
+  border-bottom: 1px solid var(--boundary);
+  color: var(--text-muted);
+  font-size: 0.65rem;
+}
+
+.tier-legend span::before {
+  display: inline-block;
+  width: 0.42rem;
+  height: 0.42rem;
+  margin-right: 0.34rem;
+  border: 1px solid var(--tier-color);
+  border-radius: 50%;
+  background: var(--tier-color);
+  content: "";
+}
+
+.aquarium-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  max-height: min(31rem, calc(100vh - 13rem));
+  overflow-y: auto;
+  padding: 0.4rem 1.3rem 1.3rem;
+}
+
+.aquarium-entry {
+  display: grid;
+  grid-template-columns: 5.6rem 1fr;
+  align-items: center;
+  min-width: 0;
+  min-height: 7.4rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--boundary);
+}
+
+.aquarium-entry .fish-sprite {
+  width: 5.4rem;
+  height: 4.5rem;
+}
+
+.aquarium-entry strong,
+.aquarium-entry small {
+  display: block;
+}
+
+.aquarium-entry strong {
+  margin-top: 0.22rem;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 0.74rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aquarium-entry small {
+  margin-top: 0.28rem;
+  color: var(--text-muted);
+  font-size: 0.58rem;
+  line-height: 1.35;
+}
+
+.aquarium-entry.is-locked .fish-sprite {
+  filter: grayscale(1) brightness(0.34);
+  opacity: 0.56;
+}
+
+.keyboard-guide {
+  position: fixed;
+  z-index: 5;
+  bottom: clamp(1rem, 3vw, 2rem);
+  left: clamp(1rem, 3vw, 2rem);
+  display: flex;
+  align-items: flex-end;
+  gap: 0.9rem;
+  pointer-events: none;
+}
+
+.key-cluster {
+  display: grid;
+  grid-template-columns: repeat(3, 2.05rem);
+  grid-template-rows: repeat(2, 2.05rem);
+  gap: 0.22rem;
+}
+
+.key-spacer {
+  display: block;
+}
+
+.key-cluster kbd {
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--boundary);
+  border-radius: 0.26rem;
+  background: var(--surface);
+  box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.72rem;
+  transition:
+    transform 100ms ease,
+    color 100ms ease,
+    background-color 100ms ease;
+}
+
+.key-cluster kbd.is-active {
+  transform: translateY(1px);
+  border-color: var(--action);
+  background: var(--action);
+  color: var(--action-text);
+}
+
+.keyboard-guide p {
+  margin: 0 0 0.2rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.keyboard-guide strong {
+  color: var(--text);
+  font-weight: 650;
+}
+
+.touch-controls {
+  display: none;
+}
+
+.touch-key {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--boundary);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  touch-action: none;
+  backdrop-filter: blur(10px);
+}
+
+.touch-key.is-active {
+  border-color: var(--action);
+  background: var(--action);
+  color: var(--action-text);
+}
+
+#loading-screen {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  align-content: end;
+  justify-items: center;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(2rem, 7vh, 5rem) 1rem;
+  background: #17383f;
+  color: var(--text);
+  transition:
+    opacity 500ms ease,
+    visibility 500ms ease;
+}
+
+#loading-screen::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: "";
+  background:
+    linear-gradient(180deg, rgba(9, 49, 64, 0.04) 15%, rgba(8, 40, 49, 0.18) 56%, rgba(6, 27, 32, 0.88) 100%),
+    radial-gradient(circle at 50% 45%, transparent 32%, rgba(4, 28, 36, 0.26) 100%);
+}
+
+#loading-screen.is-hidden {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-art {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  object-fit: cover;
+  object-position: center;
+  animation: loading-art-enter 12s ease-out both;
+}
+
+.loading-content {
+  display: grid;
+  width: min(38rem, calc(100vw - 2rem));
+  justify-items: center;
+  text-align: center;
+  text-shadow: 0 3px 24px rgba(3, 22, 27, 0.66);
+}
+
+.loading-kicker {
+  margin: 0 0 0.55rem;
+  color: #ffd08d;
+  font-size: clamp(0.64rem, 1.2vw, 0.78rem);
+  font-weight: 800;
+  letter-spacing: 0.24em;
+}
+
+.loading-title {
+  margin: 0;
+  color: #fffaf0;
+  font-family: Georgia, "Noto Serif KR", serif;
+  font-size: clamp(2.6rem, 6.8vw, 5.8rem);
+  font-weight: 700;
+  letter-spacing: -0.07em;
+  line-height: 0.96;
+}
+
+.loading-title span {
+  color: #ffd08d;
+}
+
+.loading-tagline {
+  margin: 0.72rem 0 1.1rem;
+  color: rgba(245, 241, 229, 0.86);
+  font-size: clamp(0.72rem, 1.4vw, 0.9rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.loading-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+}
+
+.loading-mark {
+  width: 0.9rem;
+  height: 0.9rem;
+  flex: 0 0 auto;
+  border: 1px solid rgba(245, 241, 229, 0.24);
+  border-top-color: var(--action);
+  border-radius: 50%;
+  animation: loading-spin 900ms linear infinite;
+}
+
+#loading-label {
+  margin: 0;
+  color: rgba(245, 241, 229, 0.88);
+  font-size: 0.74rem;
+  font-weight: 650;
+}
+
+.loading-track {
+  width: min(15rem, 70vw);
+  height: 2px;
+  margin-top: 0.72rem;
+  overflow: hidden;
+  background: rgba(245, 241, 229, 0.16);
+}
+
+#loading-progress {
+  display: block;
+  width: 5%;
+  height: 100%;
+  background: var(--action);
+  transition: width 180ms ease;
+}
+
+.game-start-button {
+  min-width: 10.5rem;
+  min-height: 3rem;
+  margin-top: 1.15rem;
+  padding: 0.65rem 1.4rem;
+  transform: translateY(0.65rem);
+  border: 1px solid rgba(255, 250, 240, 0.64);
+  border-radius: 999px;
+  opacity: 0;
+  background: #f0b66a;
+  box-shadow:
+    0 12px 34px rgba(3, 22, 27, 0.38),
+    inset 0 1px rgba(255, 255, 255, 0.36);
+  color: #15292c;
+  cursor: default;
+  font-size: 0.88rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+  transition:
+    opacity 320ms ease,
+    transform 320ms ease,
+    background 160ms ease;
+}
+
+#loading-screen.is-ready .game-start-button {
+  transform: translateY(0);
+  opacity: 1;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+#loading-screen.is-ready .game-start-button:hover {
+  background: #ffd08d;
+}
+
+#loading-screen.is-ready .loading-mark {
+  display: none;
+}
+
+#loading-screen.is-ready .loading-track {
+  opacity: 0.62;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loading-art-enter {
+  from {
+    transform: scale(1.035);
+    filter: saturate(0.88) brightness(0.9);
+  }
+
+  to {
+    transform: scale(1);
+    filter: saturate(1) brightness(1);
+  }
+}
+
+@keyframes bite-pulse {
+  to {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 4px rgba(255, 197, 115, 0.2);
+  }
+}
+
+@media (max-width: 1180px) and (min-width: 721px) {
+  .action-bar button {
+    width: 44px;
+    overflow: hidden;
+    padding-inline: 0;
+    white-space: nowrap;
+    color: transparent;
+  }
+
+  .action-bar .button-key {
+    margin: 0;
+    border: 0;
+    color: var(--action);
+  }
+
+  .fishing-action {
+    width: min(30rem, calc(100vw - 26rem));
+    min-width: 24rem;
+  }
+}
+
+@media (max-width: 720px), (pointer: coarse) {
+  .identity-note,
+  .coordinates,
+  .keyboard-guide {
+    display: none;
+  }
+
+  .identity {
+    top: 1rem;
+    left: 1rem;
+    max-width: 12rem;
+    gap: 0.55rem;
+  }
+
+  .identity h1 {
+    font-size: 1.2rem;
+  }
+
+  .angler-profile {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .telemetry {
+    top: 1rem;
+    right: 1rem;
+    width: 9.6rem;
+  }
+
+  .telemetry .coordinates,
+  .telemetry .aquarium-value-row {
+    display: none;
+  }
+
+  .cargo-ledger {
+    top: 5.2rem;
+    width: min(21rem, calc(100vw - 2rem));
+  }
+
+  .touch-controls {
+    position: fixed;
+    z-index: 7;
+    bottom: 1rem;
+    left: 1rem;
+    display: grid;
+    grid-template-columns: repeat(3, 48px);
+    grid-template-rows: repeat(2, 48px);
+    gap: 0.35rem;
+  }
+
+  .touch-up {
+    grid-column: 2;
+  }
+
+  .touch-left {
+    grid-column: 1;
+  }
+
+  .touch-down {
+    grid-column: 2;
+  }
+
+  .touch-right {
+    grid-column: 3;
+  }
+
+  .action-bar {
+    right: 1rem;
+    bottom: auto;
+    top: 10.6rem;
+    flex-direction: row;
+  }
+
+  .action-bar button {
+    min-width: 44px;
+    width: 44px;
+    overflow: hidden;
+    padding-inline: 0;
+    white-space: nowrap;
+    color: transparent;
+  }
+
+  .action-bar .button-key {
+    margin: 0;
+    border: 0;
+    color: var(--action);
+  }
+
+  .fishing-action {
+    right: 1rem;
+    bottom: 1rem;
+    left: auto;
+    display: block;
+    width: 11.2rem;
+    min-width: 0;
+    transform: none;
+  }
+
+  .action-copy {
+    padding: 0.55rem 0.62rem;
+  }
+
+  .action-copy small {
+    white-space: normal;
+  }
+
+  .fishing-buttons,
+  .fishing-buttons button {
+    width: 100%;
+  }
+
+  .fishing-buttons {
+    display: grid;
+  }
+
+  .fishing-buttons button {
+    min-height: 46px;
+    border-top: 1px solid var(--boundary);
+    border-left: 0;
+  }
+
+  .aquarium-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .aquarium-entry {
+    grid-template-columns: 4.2rem 1fr;
+    min-height: 6.2rem;
+  }
+
+  .aquarium-entry .fish-sprite {
+    width: 4rem;
+    height: 3.4rem;
+  }
+}
+
+@media (max-width: 430px) {
+  .identity .eyebrow {
+    display: none;
+  }
+
+  .identity h1 {
+    max-width: 6.5rem;
+    font-size: 1rem;
+    line-height: 1.15;
+  }
+
+  .identity {
+    max-width: 10.2rem;
+    padding: 0.28rem 0.42rem 0.28rem 0.3rem;
+    border: 1px solid rgba(229, 239, 231, 0.16);
+    border-radius: 2rem 0.45rem 0.45rem 2rem;
+    background: rgba(14, 37, 42, 0.66);
+    backdrop-filter: blur(8px);
+  }
+
+  .identity .angler-profile {
+    width: 2.65rem;
+    height: 2.65rem;
+  }
+
+  .telemetry {
+    width: 9rem;
+    padding-inline: 0.55rem;
+  }
+
+  .navigation-state {
+    font-size: 0.65rem;
+  }
+
+  .cargo-ledger {
+    top: 5rem;
+  }
+
+  .cargo-heading {
+    margin-bottom: 0.32rem;
+  }
+
+  .cargo-slots {
+    gap: 0.22rem;
+  }
+
+  .action-bar {
+    top: 10.6rem;
+  }
+
+  .fishing-action {
+    width: 10.7rem;
+  }
+
+  .catch-reveal {
+    grid-template-columns: 5.8rem 1fr;
+  }
+
+  .catch-fish {
+    width: 5.6rem;
+    height: 4.5rem;
+  }
+
+  .dialog-heading {
+    padding-inline: 0.9rem;
+  }
+
+  .tier-legend {
+    gap: 0.55rem;
+    padding-inline: 0.9rem;
+  }
+
+  .aquarium-grid {
+    padding-inline: 0.65rem;
+  }
+
+  .aquarium-entry {
+    grid-template-columns: 3.5rem 1fr;
+    padding-inline: 0.25rem;
+  }
+
+  .aquarium-entry .fish-sprite {
+    width: 3.4rem;
+    height: 3rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .telemetry {
+    display: none;
+  }
+
+  .identity {
+    max-width: 13.6rem;
+  }
+
+  .identity h1 {
+    max-width: 8.5rem;
+  }
+
+  .touch-controls {
+    grid-template-columns: repeat(3, 44px);
+    grid-template-rows: repeat(2, 44px);
+  }
+
+  .touch-key {
+    width: 44px;
+    height: 44px;
+  }
+
+  .fishing-action {
+    width: 8.8rem;
+  }
+
+  .action-copy small {
+    display: none;
+  }
+
+  .fishing-buttons button {
+    min-height: 44px;
+    padding-inline: 0.35rem;
+    font-size: 0.64rem;
+  }
+
+  .fishing-buttons .button-key {
+    padding-inline: 0.3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

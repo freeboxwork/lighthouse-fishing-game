@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#17383f" />
+    <meta
+      name="description"
+      content="Three.js로 구현한 로우폴리 등대 섬 낚시 게임"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="/assets/loading-title-art-v1.webp"
+      type="image/webp"
+      fetchpriority="high"
+    />
+    <link rel="preload" as="image" href="/assets/angler-profile-v1.png" />
+    <link rel="preload" as="image" href="/assets/fish-atlas-v2.webp" type="image/webp" />
+    <title>등대섬 낚시일지 — Three.js</title>
+  </head>
+  <body>
+    <main id="app" aria-label="등대 섬 낚시 게임">
+      <div id="scene" role="img" aria-label="배를 타고 어장으로 이동해 낚시하는 3D 바다 장면"></div>
+
+      <section
+        id="loading-screen"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="loading-title"
+        aria-describedby="loading-label"
+      >
+        <img
+          class="loading-art"
+          src="/assets/loading-title-art-v1.webp"
+          alt=""
+          fetchpriority="high"
+          draggable="false"
+        />
+        <div class="loading-content">
+          <p class="loading-kicker">MARU'S FISHING LOG</p>
+          <h1 id="loading-title" class="loading-title">등대섬 <span>낚시일지</span></h1>
+          <p class="loading-tagline">작은 배를 타고 오늘의 바다로</p>
+          <div class="loading-status">
+            <div class="loading-mark" aria-hidden="true"></div>
+            <p id="loading-label" aria-live="polite">오늘의 바다를 준비하는 중</p>
+          </div>
+          <div class="loading-track" aria-hidden="true">
+            <span id="loading-progress"></span>
+          </div>
+          <button id="game-start-button" class="game-start-button" type="button" disabled>
+            낚시 시작
+          </button>
+        </div>
+      </section>
+
+      <header class="identity">
+        <img class="angler-profile" src="/assets/angler-profile-v1.png" alt="낚시꾼 마루의 프로필" />
+        <div>
+          <p class="eyebrow">MARU'S FISHING LOG / 01</p>
+          <h1>등대섬 낚시일지</h1>
+          <p class="identity-note">어장을 찾아 낚시하고, 가득 찬 어창을 섬 수족관에 보관하세요.</p>
+        </div>
+      </header>
+
+      <section class="cargo-ledger" aria-label="배의 어창">
+        <div class="cargo-heading">
+          <span>오늘의 어창</span>
+          <strong id="cargo-count">0 / 6</strong>
+        </div>
+        <div id="cargo-slots" class="cargo-slots" aria-live="polite"></div>
+      </section>
+
+      <section class="telemetry" aria-label="항해 상태">
+        <div class="telemetry-row">
+          <span>속도</span>
+          <strong><span id="speed-value">0.0</span> kn</strong>
+        </div>
+        <div class="telemetry-row">
+          <span>현재 해역</span>
+          <strong id="zone-value">이동 중</strong>
+        </div>
+        <div class="telemetry-row">
+          <span>파고</span>
+          <strong><span id="wave-value">0.3</span> m</strong>
+        </div>
+        <div class="telemetry-row coordinates">
+          <span>좌표</span>
+          <strong id="position-value">−12.0 / −9.0</strong>
+        </div>
+        <div class="telemetry-row aquarium-value-row">
+          <span>수족관 도감</span>
+          <strong id="aquarium-count">0 / 12</strong>
+        </div>
+        <span id="camera-value" class="sr-only">추적</span>
+        <div id="navigation-state" class="navigation-state" role="status" aria-live="polite">
+          <span class="state-dot" aria-hidden="true"></span>
+          <span>모델 불러오는 중</span>
+        </div>
+      </section>
+
+      <nav class="action-bar" aria-label="장면 조작">
+        <button id="journal-button" type="button">
+          <span class="button-key" aria-hidden="true">J</span>
+          수족관 도감
+        </button>
+        <button id="camera-button" type="button" aria-pressed="false">
+          <span class="button-key" aria-hidden="true">C</span>
+          카메라 전환
+        </button>
+        <button id="reset-button" type="button">
+          <span class="button-key" aria-hidden="true">R</span>
+          배 위치 초기화
+        </button>
+      </nav>
+
+      <section id="fishing-action" class="fishing-action" data-phase="sailing" aria-label="현재 낚시 행동">
+        <div class="action-copy">
+          <p id="fishing-action-title">어장을 찾는 중</p>
+          <small id="fishing-action-hint">바다의 빛나는 원형 표식으로 이동하세요</small>
+        </div>
+        <div class="fishing-buttons">
+          <button id="fishing-button" type="button" disabled>
+            <span class="button-key" aria-hidden="true">SPACE</span>
+            <span class="action-label">낚시하기</span>
+          </button>
+          <button id="dock-button" type="button" hidden>
+            <span class="button-key" aria-hidden="true">E</span>
+            수족관에 보관
+          </button>
+        </div>
+        <div id="fishing-fight-meter" class="fight-meter" hidden aria-label="낚싯줄 장력과 물고기 거리">
+          <div class="fight-meter-labels">
+            <span>줄 장력</span>
+            <strong id="fishing-tension-label">안정</strong>
+            <span>끌어오기</span>
+          </div>
+          <div class="tension-track" aria-hidden="true">
+            <span class="tension-safe-zone"></span>
+            <span id="fishing-tension-fill" class="tension-fill"></span>
+            <i id="fishing-tension-needle" class="tension-needle"></i>
+          </div>
+          <div class="reel-track" aria-hidden="true">
+            <span id="fishing-reel-fill"></span>
+          </div>
+        </div>
+        <span class="fishing-progress-track" aria-hidden="true">
+          <span id="fishing-progress"></span>
+        </span>
+      </section>
+
+      <aside id="catch-reveal" class="catch-reveal" aria-live="assertive" aria-atomic="true">
+        <span id="catch-fish" class="fish-sprite catch-fish" aria-hidden="true"></span>
+        <div>
+          <span id="catch-tier" class="tier-label">일반</span>
+          <strong id="catch-name">은빛 정어리</strong>
+          <small id="catch-weight">0.24 kg</small>
+        </div>
+      </aside>
+
+      <section class="keyboard-guide" aria-label="키보드 조작 안내">
+        <div class="key-cluster" role="group" aria-label="방향 조작">
+          <span class="key-spacer" aria-hidden="true"></span>
+          <kbd data-control="forward">W</kbd>
+          <span class="key-spacer" aria-hidden="true"></span>
+          <kbd data-control="left">A</kbd>
+          <kbd data-control="backward">S</kbd>
+          <kbd data-control="right">D</kbd>
+        </div>
+        <p><strong>WASD</strong> 항해 · <strong>SPACE</strong> 낚시/장력 · <strong>E</strong> 보관</p>
+      </section>
+
+      <section class="touch-controls" aria-label="터치 항해 조작">
+        <button class="touch-key touch-up" data-touch="forward" aria-label="앞으로 이동">▲</button>
+        <button class="touch-key touch-left" data-touch="left" aria-label="왼쪽으로 회전">◀</button>
+        <button class="touch-key touch-down" data-touch="backward" aria-label="뒤로 이동">▼</button>
+        <button class="touch-key touch-right" data-touch="right" aria-label="오른쪽으로 회전">▶</button>
+      </section>
+
+      <dialog id="aquarium-dialog" class="aquarium-dialog" aria-labelledby="aquarium-title">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">ISLAND AQUARIUM</p>
+            <h2 id="aquarium-title">섬 수족관 도감</h2>
+            <p id="aquarium-summary">발견 0 / 12종 · 보관 0마리</p>
+          </div>
+          <button id="aquarium-close" class="dialog-close" type="button" aria-label="수족관 도감 닫기">닫기</button>
+        </div>
+        <div class="tier-legend" aria-label="물고기 등급">
+          <span data-tier="common">일반</span>
+          <span data-tier="uncommon">고급</span>
+          <span data-tier="rare">희귀</span>
+          <span data-tier="legendary">전설</span>
+        </div>
+        <div id="aquarium-grid" class="aquarium-grid"></div>
+      </dialog>
+
+      <p id="app-status" class="sr-only" aria-live="polite"></p>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

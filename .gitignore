@@ -1,0 +1,18 @@
+node_modules/
+dist/
+.vercel/
+artifacts/
+scripts/
+verification-*.png
+
+# Superseded runtime assets retained only in the local working folder
+public/assets/fish-atlas-v1.png
+public/models/rowboat.glb
+public/models/rowboat-blender-pre-fishing-v2.glb
+
+# Local logs and OS/editor metadata
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
